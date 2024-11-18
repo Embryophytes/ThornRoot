@@ -1,5 +1,5 @@
 [workspace]
 
 members = [
-    "test_crate",
+    "test_crate", "thorn_root",
 ]
