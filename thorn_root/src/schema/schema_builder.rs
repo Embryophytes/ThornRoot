@@ -42,6 +42,10 @@ where
         self.tables.last_mut().unwrap()
     }
 
+    pub fn remove_table(&mut self, _table_name: &str) -> Result<(), String> {
+        todo!()
+    }
+
     /// Adds a column to an existing table.
     pub fn add_column(
         &mut self,
