@@ -11,5 +11,4 @@ pub struct Relationship {
 pub enum RelationshipType {
     OneToOne,
     OneToMany,
-    ManyToMany,
 }
