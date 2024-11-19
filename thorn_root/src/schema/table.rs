@@ -13,7 +13,7 @@ impl Table {
         Self {
             name: table_name.to_string(),
             columns: vec![],
-            relationships: vec![]
+            relationships: vec![],
         }
     }
 

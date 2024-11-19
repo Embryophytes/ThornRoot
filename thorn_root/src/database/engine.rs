@@ -14,4 +14,3 @@ pub trait DatabaseEngine: Default {
         desired_schema: &str,
     ) -> Result<MigrationPlan, String>;
 }
-

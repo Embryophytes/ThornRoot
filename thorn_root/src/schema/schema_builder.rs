@@ -6,18 +6,18 @@ use super::column::Column;
 use super::relationship::Relationship;
 use super::table::Table;
 
-
 pub struct SchemaBuilder<T>
 where
-    T: DatabaseEngine {
+    T: DatabaseEngine,
+{
     tables: Vec<Table>,
     database_engine: Arc<T>,
 }
 
 impl<T> Default for SchemaBuilder<T>
 where
-    T: DatabaseEngine
- {
+    T: DatabaseEngine,
+{
     fn default() -> Self {
         Self::new()
     }
@@ -25,10 +25,11 @@ where
 
 impl<T> SchemaBuilder<T>
 where
-    T: DatabaseEngine {
+    T: DatabaseEngine,
+{
     /// Creates a new, empty `SchemaBuilder`.
     pub fn new() -> Self {
-        Self { 
+        Self {
             tables: Vec::new(),
             database_engine: Arc::default(),
         }
@@ -42,7 +43,12 @@ where
     }
 
     /// Adds a column to an existing table.
-    pub fn add_column(&mut self, table_name: &str, column: Column, _save_with_error: bool) -> Result<(), String> {
+    pub fn add_column(
+        &mut self,
+        table_name: &str,
+        column: Column,
+        _save_with_error: bool,
+    ) -> Result<(), String> {
         match self.tables.iter_mut().find(|t| t.name == table_name) {
             Some(table) => {
                 table.add_column(column);
@@ -53,39 +59,59 @@ where
     }
 
     /// Updates a column in an existing table.
-    pub fn update_column(&mut self, _updated_column: Column, _save_with_error: bool) -> Result<(), String> {
+    pub fn update_column(
+        &mut self,
+        _updated_column: Column,
+        _save_with_error: bool,
+    ) -> Result<(), String> {
         todo!();
         // Perform a validation if any relations to this entity has been added
-        // probably 
+        // probably
     }
 
     /// Deletes a column from an existing table.
-    pub fn delete_column(&mut self, _updated_column: Column, _save_with_error: bool) -> Result<(), String> {
+    pub fn delete_column(
+        &mut self,
+        _updated_column: Column,
+        _save_with_error: bool,
+    ) -> Result<(), String> {
         todo!();
         // Perform a validation if any relations to this entity has been added
-        // probably 
+        // probably
     }
 
     /// Add a relation to the schema.
-    pub fn add_relation(&mut self, _relationship: Relationship, _save_with_error: bool) -> Result<(), String> {
-        todo!();        
+    pub fn add_relation(
+        &mut self,
+        _relationship: Relationship,
+        _save_with_error: bool,
+    ) -> Result<(), String> {
+        todo!();
     }
 
     /// Updates a relation in the schema.
-    pub fn update_relation(&mut self, _updated_relationship: Relationship, _save_with_error: bool) -> Result<(), String> {
-        todo!();        
+    pub fn update_relation(
+        &mut self,
+        _updated_relationship: Relationship,
+        _save_with_error: bool,
+    ) -> Result<(), String> {
+        todo!();
     }
 
     /// Deletes a relation from the schema.
-    pub fn delete_relation(&mut self, _updated_relationship: Relationship, _save_with_error: bool) -> Result<(), String> {
-        todo!();        
+    pub fn delete_relation(
+        &mut self,
+        _updated_relationship: Relationship,
+        _save_with_error: bool,
+    ) -> Result<(), String> {
+        todo!();
     }
 
     /// Builds the schema and returns the result.
     pub fn build(self) -> Vec<Table> {
         self.tables
     }
-    
+
     pub fn database_engine(&self) -> &T {
         &self.database_engine
     }
