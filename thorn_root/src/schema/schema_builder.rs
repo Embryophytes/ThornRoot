@@ -14,6 +14,15 @@ where
     database_engine: Arc<T>,
 }
 
+impl<T> Default for SchemaBuilder<T>
+where
+    T: DatabaseEngine
+ {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl<T> SchemaBuilder<T>
 where
     T: DatabaseEngine {
