@@ -1,5 +1,6 @@
 #[derive(Debug, Clone)]
 pub struct Relationship {
+    // api codes are used here
     pub from_table: String, // not sure about strings but we will see
     pub from_column: String,
     pub to_table: String,
