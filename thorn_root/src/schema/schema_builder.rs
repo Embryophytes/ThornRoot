@@ -37,6 +37,16 @@ where
         }
     }
 
+    /// gets a mut reference by table name
+    pub fn get_table_mut_ref(&mut self, table_name: &str) -> Option<&mut Table> {
+        self.tables.iter_mut().find(|t| t.name == table_name)
+    }
+
+    /// gets a reference by table name
+    pub fn get_table_ref(&self, table_name: &str) -> Option<&Table> {
+        self.tables.iter().find(|t| t.name == table_name)
+    }
+
     /// Adds a new table to the schema.
     pub fn add_table(&mut self, table_name: &str) -> &mut Table {
         let table = Table::new(table_name);
@@ -44,8 +54,10 @@ where
         self.tables.last_mut().unwrap()
     }
 
-    pub fn remove_table(&mut self, _table_name: &str) -> Result<(), String> {
-        todo!()
+    /// removes the table from the schema
+    pub fn remove_table(&mut self, table_name: &str) -> Result<Table, String> {
+        let index = self.tables.iter().position(|t| t.name == table_name).ok_or(format!("Table '{}' not found", table_name))?;
+        Ok(self.tables.swap_remove(index))
     }
 
     /// Adds a column to an existing table.

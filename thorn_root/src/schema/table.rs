@@ -9,6 +9,16 @@ pub struct Table {
     pub saved_with_error: bool,
 }
 
+impl Drop for Table {
+    fn drop(&mut self) {
+        let relationships = std::mem::take(&mut self.relationships);
+
+        for relationship in relationships {
+            let _ = self.delete_relation(relationship);
+        }
+    }
+}
+
 impl Table {
     pub fn new(table_name: &str) -> Self {
         Self {
