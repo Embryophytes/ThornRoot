@@ -1,3 +1,5 @@
+pub mod dto;
+
 pub enum ApiCodeType {
     Table,
     Column,

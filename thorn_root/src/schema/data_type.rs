@@ -7,3 +7,4 @@ pub enum DataType {
     Date,
     Custom(String),
 }
+// need to write a converter to string for the DataType
