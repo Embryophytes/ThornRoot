@@ -14,6 +14,8 @@ where
 {
     tables: Vec<Table>,
     database_engine: Arc<T>,
+    path_to_built_migrations: String,
+    current_version: u8,
 }
 
 impl<T> Default for SchemaBuilder<T>
@@ -21,7 +23,12 @@ where
     T: DatabaseEngine,
 {
     fn default() -> Self {
-        Self::new()
+        Self {
+            tables: Vec::new(),
+            database_engine: Arc::default(),
+            path_to_built_migrations: String::new(),
+            current_version: 1,
+        }
     }
 }
 
@@ -29,12 +36,19 @@ impl<T> SchemaBuilder<T>
 where
     T: DatabaseEngine,
 {
-    /// Creates a new, empty `SchemaBuilder`.
-    pub fn new() -> Self {
+    /// Creates a new `SchemaBuilder` with path where to save migrations
+    pub fn new(path_to_built_migrations: &str) -> Self {
         Self {
             tables: Vec::new(),
             database_engine: Arc::default(),
-        }
+            path_to_built_migrations: path_to_built_migrations.to_string(),
+            current_version: 1,
+        }   
+    }
+
+    /// Creates a new `SchemaBuilder` from previsously saved data shema
+    pub fn new_from_file(path_to_binary: &str, path_to_built_migrations: &str) -> Self {
+        todo!()
     }
 
     /// gets a mut reference by table name
@@ -172,6 +186,9 @@ where
     pub fn build(&mut self) -> Result<(), String> {
         // buildes the schema - saves it to the files
         // self.tables
+        let db_engine = self.database_engine.as_ref();
+        let tables = self.tables.as_slice();
+        db_engine.generate_migration_plan(tables);
         Ok(())
     }
 

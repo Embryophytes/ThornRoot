@@ -1,4 +1,5 @@
 use crate::migration::migration_plan::MigrationPlan;
+use crate::schema::table::Table;
 
 pub trait DatabaseEngine: Default {
     /// Returns the name of the database engine (e.g., "PostgreSQL", "MySQL").
@@ -10,7 +11,6 @@ pub trait DatabaseEngine: Default {
     /// Generates a migration plan based on the current and desired schema.
     fn generate_migration_plan(
         &self,
-        current_schema: &str,
-        desired_schema: &str,
+        tables: &[Table],
     ) -> Result<MigrationPlan, String>;
 }

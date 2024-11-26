@@ -1,4 +1,5 @@
 use crate::migration::migration_plan::MigrationPlan;
+use crate::schema::table::Table;
 
 use super::engine::DatabaseEngine;
 
@@ -16,9 +17,10 @@ impl DatabaseEngine for PostgresEngine {
 
     fn generate_migration_plan(
         &self,
-        _current_schema: &str,
-        _desired_schema: &str,
+        _tables: &[Table],
     ) -> Result<MigrationPlan, String> {
+        // need to generate the migration plan based on some existing schema
+        // I guess I do need here to compare the existing tables with DTO structures
         Ok(MigrationPlan { steps: vec![] })
     }
 }
