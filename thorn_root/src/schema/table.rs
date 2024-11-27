@@ -93,7 +93,9 @@ impl Table {
             .find(|r| r.from_column == existing_api_code || r.to_column == existing_api_code);
         if existing_relation.is_some() && updated_column.data_type != self.columns[index].data_type
         {
-            return Err("Remove existing relations before changing data type of the column".to_string());
+            return Err(
+                "Remove existing relations before changing data type of the column".to_string(),
+            );
         }
         let _ = std::mem::replace(&mut self.columns[index], updated_column);
         Ok(self)
@@ -132,7 +134,9 @@ impl Table {
         // just check if such a relation is already created for the given table
         let index = self.relationships.iter().position(|r| *r == relationship);
         match index {
-            Some(_) => Err("Such a relation is already created for the given tables and columns".to_string()),
+            Some(_) => Err(
+                "Such a relation is already created for the given tables and columns".to_string(),
+            ),
             None => {
                 self.relationships.push(relationship);
                 Ok(self)
