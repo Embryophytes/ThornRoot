@@ -56,7 +56,11 @@ where
 
     /// removes the table from the schema
     pub fn remove_table(&mut self, table_name: &str) -> Result<Table, String> {
-        let index = self.tables.iter().position(|t| t.name == table_name).ok_or(format!("Table '{}' not found", table_name))?;
+        let index = self
+            .tables
+            .iter()
+            .position(|t| t.name == table_name)
+            .ok_or(format!("Table '{}' not found", table_name))?;
         Ok(self.tables.swap_remove(index))
     }
 
@@ -68,11 +72,13 @@ where
         save_with_error: bool,
     ) -> Result<&mut Table, String> {
         match self.tables.iter_mut().find(|t| t.name == table_name) {
-            Some(table) => 
-                // save with error means if there is a column with such a name
-                // we would still save it but the migration will fail
-                table.add_column(column, save_with_error),
-            
+            Some(table) =>
+            // save with error means if there is a column with such a name
+            // we would still save it but the migration will fail
+            {
+                table.add_column(column, save_with_error)
+            }
+
             None => Err(format!("Table '{}' not found", table_name)),
         }
     }
@@ -85,11 +91,13 @@ where
         save_with_error: bool,
     ) -> Result<&mut Table, String> {
         match self.tables.iter_mut().find(|t| t.name == table_name) {
-            Some(table) => 
-                // save with error means if there is a column with such a name
-                // we would still save it but the migration will fail
-                table.update_column(updated_column, save_with_error),
-            
+            Some(table) =>
+            // save with error means if there is a column with such a name
+            // we would still save it but the migration will fail
+            {
+                table.update_column(updated_column, save_with_error)
+            }
+
             None => Err(format!("Table '{}' not found", table_name)),
         }
     }
@@ -103,11 +111,13 @@ where
     ) -> Result<&mut Table, String> {
         // to make it easier you firstly need to remove all the relations and then you can remove the column
         match self.tables.iter_mut().find(|t| t.name == table_name) {
-            Some(table) => 
-                // save with error means if there is a column with such a name
-                // we would still save it but the migration will fail
-                table.delete_column(column_name_to_delete, save_with_error),
-            
+            Some(table) =>
+            // save with error means if there is a column with such a name
+            // we would still save it but the migration will fail
+            {
+                table.delete_column(column_name_to_delete, save_with_error)
+            }
+
             None => Err(format!("Table '{}' not found", table_name)),
         }
     }
@@ -118,17 +128,25 @@ where
         relationship: Relationship,
         save_with_error: bool,
     ) -> Result<(), String> {
-        let from_table = match self.tables.iter_mut().find(|t| t.name == relationship.from_table) {
+        let from_table = match self
+            .tables
+            .iter_mut()
+            .find(|t| t.name == relationship.from_table)
+        {
             Some(table) => table,
             None => return Err(format!("Table '{}' not found", relationship.from_table)),
         };
         from_table.add_relation(relationship.clone(), save_with_error)?;
-        let to_table: &mut Table = match self.tables.iter_mut().find(|t| t.name == relationship.to_table) {
+        let to_table: &mut Table = match self
+            .tables
+            .iter_mut()
+            .find(|t| t.name == relationship.to_table)
+        {
             Some(table) => table,
             None => return Err(format!("Table '{}' not found", relationship.to_table)),
         };
         to_table.add_relation(relationship, save_with_error)?;
-        Ok(())   
+        Ok(())
     }
 
     /// Updates a relation in the schema.
@@ -137,32 +155,65 @@ where
         updated_relationship: Relationship,
         save_with_error: bool,
     ) -> Result<(), String> {
-        let from_table = match self.tables.iter_mut().find(|t| t.name == updated_relationship.from_table) {
+        let from_table = match self
+            .tables
+            .iter_mut()
+            .find(|t| t.name == updated_relationship.from_table)
+        {
             Some(table) => table,
-            None => return Err(format!("Table '{}' not found", updated_relationship.from_table)),
+            None => {
+                return Err(format!(
+                    "Table '{}' not found",
+                    updated_relationship.from_table
+                ))
+            }
         };
         from_table.update_relation(updated_relationship.clone(), save_with_error)?;
-        let to_table: &mut Table = match self.tables.iter_mut().find(|t| t.name == updated_relationship.to_table) {
+        let to_table: &mut Table = match self
+            .tables
+            .iter_mut()
+            .find(|t| t.name == updated_relationship.to_table)
+        {
             Some(table) => table,
-            None => return Err(format!("Table '{}' not found", updated_relationship.to_table)),
+            None => {
+                return Err(format!(
+                    "Table '{}' not found",
+                    updated_relationship.to_table
+                ))
+            }
         };
         to_table.update_relation(updated_relationship, save_with_error)?;
         Ok(())
     }
 
     /// Deletes a relation from the schema.
-    pub fn delete_relation(
-        &mut self,
-        relationship_to_delete: Relationship,
-    ) -> Result<(), String> {
-        let from_table = match self.tables.iter_mut().find(|t| t.name == relationship_to_delete.from_table) {
+    pub fn delete_relation(&mut self, relationship_to_delete: Relationship) -> Result<(), String> {
+        let from_table = match self
+            .tables
+            .iter_mut()
+            .find(|t| t.name == relationship_to_delete.from_table)
+        {
             Some(table) => table,
-            None => return Err(format!("Table '{}' not found", relationship_to_delete.from_table)),
+            None => {
+                return Err(format!(
+                    "Table '{}' not found",
+                    relationship_to_delete.from_table
+                ))
+            }
         };
         from_table.delete_relation(relationship_to_delete.clone())?;
-        let to_table: &mut Table = match self.tables.iter_mut().find(|t| t.name == relationship_to_delete.to_table) {
+        let to_table: &mut Table = match self
+            .tables
+            .iter_mut()
+            .find(|t| t.name == relationship_to_delete.to_table)
+        {
             Some(table) => table,
-            None => return Err(format!("Table '{}' not found", relationship_to_delete.to_table)),
+            None => {
+                return Err(format!(
+                    "Table '{}' not found",
+                    relationship_to_delete.to_table
+                ))
+            }
         };
         to_table.delete_relation(relationship_to_delete)?;
         Ok(())
