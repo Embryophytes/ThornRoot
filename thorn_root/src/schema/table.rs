@@ -93,9 +93,7 @@ impl Table {
             .find(|r| r.from_column == existing_api_code || r.to_column == existing_api_code);
         if existing_relation.is_some() && updated_column.data_type != self.columns[index].data_type
         {
-            return Err(format!(
-                "Remove existing relations before changing data type of the column"
-            ));
+            return Err("Remove existing relations before changing data type of the column".to_string());
         }
         let _ = std::mem::replace(&mut self.columns[index], updated_column);
         Ok(self)
@@ -119,9 +117,7 @@ impl Table {
             r.from_column == column_code_to_delete || r.to_column == column_code_to_delete
         });
         if existing_relation.is_some() {
-            return Err(format!(
-                "Remove existing relations before deleting the column"
-            ));
+            return Err("Remove existing relations before deleting the column".to_string());
         }
         let _ = self.columns.swap_remove(index);
         Ok(self)
@@ -136,9 +132,7 @@ impl Table {
         // just check if such a relation is already created for the given table
         let index = self.relationships.iter().position(|r| *r == relationship);
         match index {
-            Some(_) => Err(format!(
-                "Such a relation is already created for the given tables and columns"
-            )),
+            Some(_) => Err("Such a relation is already created for the given tables and columns".to_string()),
             None => {
                 self.relationships.push(relationship);
                 Ok(self)
@@ -167,7 +161,7 @@ impl Table {
             .relationships
             .iter()
             .position(|r| *r == relationship_to_delete)
-            .ok_or(format!("Such a realation doesn't exist"))?;
+            .ok_or("Such a realation doesn't exist".to_string())?;
         let _ = self.relationships.swap_remove(index);
         Ok(self)
     }
