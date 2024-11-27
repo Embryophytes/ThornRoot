@@ -58,7 +58,9 @@ impl Encoder for RelationshipDTO {
         let binary_writer_builder = ion_rs::BinaryWriterBuilder::new();
         let mut writer = binary_writer_builder.build(buffer.clone()).unwrap();
 
-        writer.step_in(ion_rs::IonType::Struct).expect("Error while creating an ion struct");
+        writer
+            .step_in(ion_rs::IonType::Struct)
+            .expect("Error while creating an ion struct");
 
         writer.set_field_name("from_table");
         writer.write_string(&self.from_table).unwrap();
@@ -103,7 +105,13 @@ impl Decoder for RelationshipDTO {
         reader.next().unwrap();
         let relationship_type = reader.read_i64().unwrap() as u8; // Reading as i64, converting to u8
 
-        RelationshipDTO::new(from_table, from_column, to_table, to_column, relationship_type)
+        RelationshipDTO::new(
+            from_table,
+            from_column,
+            to_table,
+            to_column,
+            relationship_type,
+        )
     }
 }
 

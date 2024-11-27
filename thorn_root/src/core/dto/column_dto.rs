@@ -59,7 +59,9 @@ impl Encoder for ColumnDTO {
         let binary_writer_builder = ion_rs::BinaryWriterBuilder::new();
         let mut writer = binary_writer_builder.build(buffer.clone()).unwrap();
 
-        writer.step_in(ion_rs::IonType::Struct).expect("Error while creating an ion struct");
+        writer
+            .step_in(ion_rs::IonType::Struct)
+            .expect("Error while creating an ion struct");
 
         writer.set_field_name("name");
         writer.write_string(&self.name).unwrap();
@@ -127,7 +129,7 @@ mod tests {
             DATA_TYPE.to_string(),
             IS_PRIMARY_KEY,
             IS_NULLABLE,
-            API_CODE.to_string()
+            API_CODE.to_string(),
         );
 
         let encoded = column.encode();
@@ -149,9 +151,8 @@ mod tests {
             DATA_TYPE.to_string(),
             IS_PRIMARY_KEY,
             IS_NULLABLE,
-            API_CODE.to_string()
+            API_CODE.to_string(),
         );
-
 
         assert_eq!(column.get_name(), NAME);
         assert_eq!(column.get_data_type(), DATA_TYPE);

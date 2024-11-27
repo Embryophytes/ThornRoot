@@ -3,9 +3,9 @@ use ion_rs::element::reader::ElementReader;
 use ion_rs::{IonReader, IonWriter};
 
 use super::column_dto::ColumnDTO;
-use super::relationship_dto::RelationshipDTO;
 use super::decoder::Decoder;
 use super::encoder::Encoder;
+use super::relationship_dto::RelationshipDTO;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct TableDTO {
@@ -61,7 +61,9 @@ impl Encoder for TableDTO {
         let binary_writer_builder = ion_rs::BinaryWriterBuilder::new();
         let mut writer = binary_writer_builder.build(buffer.clone()).unwrap();
 
-        writer.step_in(ion_rs::IonType::Struct).expect("Error while creating an ion struct");
+        writer
+            .step_in(ion_rs::IonType::Struct)
+            .expect("Error while creating an ion struct");
 
         writer.set_field_name("name");
         writer.write_string(&self.name).unwrap();
@@ -133,9 +135,9 @@ impl Decoder for TableDTO {
 #[cfg(test)]
 mod tests {
     use super::super::column_dto::ColumnDTO;
-    use super::super::relationship_dto::RelationshipDTO;
     use super::super::decoder::Decoder;
     use super::super::encoder::Encoder;
+    use super::super::relationship_dto::RelationshipDTO;
     use super::TableDTO;
 
     #[test]
