@@ -6,7 +6,7 @@ pub struct Column {
     pub data_type: DataType,
     pub is_primary_key: bool,
     pub is_nullable: bool,
-    api_code: String
+    api_code: String,
 }
 
 impl Column {

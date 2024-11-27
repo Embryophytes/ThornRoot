@@ -14,7 +14,6 @@ pub struct Relationship {
     // If new - create a new one
 }
 
-
 impl PartialEq for Relationship {
     fn eq(&self, other: &Self) -> bool {
         self.from_table == other.from_table
