@@ -1,6 +1,6 @@
 use super::column::Column;
 use super::relationship::Relationship;
-use super::schema::Schema;
+use super::Schema;
 
 #[derive(Default)]
 pub struct Table {

@@ -24,10 +24,31 @@ impl ToString for MigrationPlan {
 
 #[derive(Debug, Clone)]
 pub enum MigrationStep {
-    CreateTable { name: String, sql_script: String },
-    DropTable { name: String, sql_script: String },
-    AddColumn { table: String, column: Column, sql_script: String },
-    RemoveColumn { table: String, column_name: String, sql_script: String },
-    AlterColumn { table: String, column: Column, sql_script: String },
-    AddRelationship { relationship: Relationship, sql_script: String },
+    CreateTable {
+        name: String,
+        sql_script: String,
+    },
+    DropTable {
+        name: String,
+        sql_script: String,
+    },
+    AddColumn {
+        table: String,
+        column: Column,
+        sql_script: String,
+    },
+    RemoveColumn {
+        table: String,
+        column_name: String,
+        sql_script: String,
+    },
+    AlterColumn {
+        table: String,
+        column: Column,
+        sql_script: String,
+    },
+    AddRelationship {
+        relationship: Relationship,
+        sql_script: String,
+    },
 }

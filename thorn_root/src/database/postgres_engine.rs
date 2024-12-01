@@ -1,5 +1,5 @@
 use crate::migration::migration_plan::MigrationPlan;
-use crate::schema::schema::Schema;
+use crate::schema::Schema;
 
 use super::engine::DatabaseEngine;
 
@@ -11,10 +11,7 @@ impl DatabaseEngine for PostgresEngine {
         "PostgreSQL"
     }
 
-    fn generate_migration_plan(
-        &self,
-        _schema: &Schema
-    ) -> Result<MigrationPlan, String> {
+    fn generate_migration_plan(&self, _schema: &Schema) -> Result<MigrationPlan, String> {
         Ok(MigrationPlan::default())
     }
 }
