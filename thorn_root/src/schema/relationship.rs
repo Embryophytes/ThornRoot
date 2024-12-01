@@ -1,4 +1,4 @@
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Relationship {
     from_table: String,
     from_column: String,
@@ -47,8 +47,8 @@ impl Relationship {
     }
 
     /// Getter for `relationship_type`
-    pub fn get_relationship_type(&self) -> &RelationshipType {
-        &self.relationship_type
+    pub fn get_relationship_type(&self) -> RelationshipType {
+        self.relationship_type.to_owned()
     }
 
     /// Getter for `code`
@@ -58,34 +58,18 @@ impl Relationship {
 
     pub fn set_from_table(&mut self, from_table: &str) {
         self.from_table = from_table.to_string();
-        self.code = format!(
-            "{}_{}_{}_{}",
-            &self.from_table, &self.from_column, &self.to_table, &self.to_column
-        );
     }
 
     pub fn set_from_column(&mut self, from_column: &str) {
         self.from_column = from_column.to_string();
-        self.code = format!(
-            "{}_{}_{}_{}",
-            &self.from_table, &self.from_column, &self.to_table, &self.to_column
-        );
     }
 
     pub fn set_to_table(&mut self, to_table: &str) {
         self.to_table = to_table.to_string();
-        self.code = format!(
-            "{}_{}_{}_{}",
-            &self.from_table, &self.from_column, &self.to_table, &self.to_column
-        );
     }
 
     pub fn set_to_column(&mut self, to_column: &str) {
         self.to_column = to_column.to_string();
-        self.code = format!(
-            "{}_{}_{}_{}",
-            &self.from_table, &self.from_column, &self.to_table, &self.to_column
-        );
     }
 
     pub fn set_relationship_type(&mut self, relationship_type: RelationshipType) {
@@ -93,7 +77,7 @@ impl Relationship {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub enum RelationshipType {
     OneToOne,
     OneToMany,
