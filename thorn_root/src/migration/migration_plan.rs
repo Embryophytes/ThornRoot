@@ -14,10 +14,8 @@ impl MigrationPlan {
     pub fn get_steps(&self) -> &[MigrationStep] {
         &self.steps
     }
-}
 
-impl ToString for MigrationPlan {
-    fn to_string(&self) -> String {
+    pub fn get_sql(&self) -> String {
         todo!()
     }
 }
