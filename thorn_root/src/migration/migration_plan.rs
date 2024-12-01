@@ -1,17 +1,33 @@
 use crate::schema::column::Column;
 use crate::schema::relationship::Relationship;
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Default, Clone)]
 pub struct MigrationPlan {
-    pub steps: Vec<MigrationStep>,
+    steps: Vec<MigrationStep>,
+}
+
+impl MigrationPlan {
+    pub fn new(steps: Vec<MigrationStep>) -> Self {
+        Self { steps }
+    }
+
+    pub fn get_steps(&self) -> &[MigrationStep] {
+        &self.steps
+    }
+}
+
+impl ToString for MigrationPlan {
+    fn to_string(&self) -> String {
+        todo!()
+    }
 }
 
 #[derive(Debug, Clone)]
 pub enum MigrationStep {
-    CreateTable { name: String },
-    DropTable { name: String },
-    AddColumn { table: String, column: Column },
-    RemoveColumn { table: String, column_name: String },
-    AlterColumn { table: String, column: Column },
-    AddRelationship { relationship: Relationship },
+    CreateTable { name: String, sql_script: String },
+    DropTable { name: String, sql_script: String },
+    AddColumn { table: String, column: Column, sql_script: String },
+    RemoveColumn { table: String, column_name: String, sql_script: String },
+    AlterColumn { table: String, column: Column, sql_script: String },
+    AddRelationship { relationship: Relationship, sql_script: String },
 }

@@ -1,4 +1,5 @@
 use crate::migration::migration_plan::MigrationPlan;
+use crate::schema::schema::Schema;
 
 use super::engine::DatabaseEngine;
 
@@ -10,15 +11,10 @@ impl DatabaseEngine for PostgresEngine {
         "PostgreSQL"
     }
 
-    fn apply_migration(&self, _migration: &MigrationPlan) -> Result<(), String> {
-        Ok(())
-    }
-
     fn generate_migration_plan(
         &self,
-        _current_schema: &str,
-        _desired_schema: &str,
+        _schema: &Schema
     ) -> Result<MigrationPlan, String> {
-        Ok(MigrationPlan { steps: vec![] })
+        Ok(MigrationPlan::default())
     }
 }

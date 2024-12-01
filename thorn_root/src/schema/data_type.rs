@@ -5,5 +5,4 @@ pub enum DataType {
     String,
     Boolean,
     Date,
-    Custom(String),
 }
