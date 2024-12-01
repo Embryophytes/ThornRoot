@@ -40,7 +40,10 @@ impl Schema {
     ///
     /// # Returns
     /// - A `Result` containing a vector of references to `Relationship` if found, or an error message.
-    pub fn get_relationships_for_table(&self, table_name: &str) -> Result<Vec<&Relationship>, String> {
+    pub fn get_relationships_for_table(
+        &self,
+        table_name: &str,
+    ) -> Result<Vec<&Relationship>, String> {
         let _ = self.get_table(table_name)?;
         let relationship = self
             .relations
@@ -63,7 +66,9 @@ impl Schema {
         let tables = self
             .tables
             .iter()
-            .filter(|t| t.get_name() == relation.get_from_table() || t.get_name() == relation.get_to_table())
+            .filter(|t| {
+                t.get_name() == relation.get_from_table() || t.get_name() == relation.get_to_table()
+            })
             .collect::<Vec<&Table>>();
 
         Ok(tables)
@@ -77,9 +82,16 @@ impl Schema {
     /// # Returns
     /// - A `Result` containing a reference to the `Relationship` if found, or an error message.
     pub fn get_relationship_with_code(&self, relation_code: &str) -> Result<&Relationship, String> {
-        match self.relations.iter().find(|r| r.get_code() == relation_code) {
+        match self
+            .relations
+            .iter()
+            .find(|r| r.get_code() == relation_code)
+        {
             Some(relationship) => Ok(relationship),
-            None => Err(format!("Relationship with code {} doesn't exist", relation_code)),
+            None => Err(format!(
+                "Relationship with code {} doesn't exist",
+                relation_code
+            )),
         }
     }
 
@@ -90,10 +102,20 @@ impl Schema {
     ///
     /// # Returns
     /// - A `Result` containing a mutable reference to the `Relationship` if found, or an error message.
-    pub fn get_relationship_with_code_mut(&mut self, relation_code: &str) -> Result<&mut Relationship, String> {
-        match self.relations.iter_mut().find(|r| r.get_code() == relation_code) {
+    pub fn get_relationship_with_code_mut(
+        &mut self,
+        relation_code: &str,
+    ) -> Result<&mut Relationship, String> {
+        match self
+            .relations
+            .iter_mut()
+            .find(|r| r.get_code() == relation_code)
+        {
             Some(relationship) => Ok(relationship),
-            None => Err(format!("Relationship with code {} doesn't exist", relation_code)),
+            None => Err(format!(
+                "Relationship with code {} doesn't exist",
+                relation_code
+            )),
         }
     }
 
@@ -167,14 +189,12 @@ impl Schema {
     pub fn add_table(&mut self, table_name: &str) -> Result<&Table, String> {
         let index = self.tables.iter().position(|t| t.get_name() == table_name);
         match index {
-            Some(_) => {
-                Err(format!("Table with name {} already exists", table_name))
-            },
+            Some(_) => Err(format!("Table with name {} already exists", table_name)),
             None => {
                 self.tables.push(Table::new(table_name));
                 Ok(self.tables.last().unwrap())
-            },
-        } 
+            }
+        }
     }
 
     /// Removes a table from the schema.
@@ -200,12 +220,8 @@ impl Schema {
     ///
     /// # Returns
     /// - A `Result` containing a reference to the newly added relationship, or an error message if the relationship already exists.
-    pub fn add_relation(
-        &mut self,
-        relationship: Relationship,        
-    ) -> Result<&Relationship, String> {
-        let from_table = self
-            .get_table(relationship.get_from_table());
+    pub fn add_relation(&mut self, relationship: Relationship) -> Result<&Relationship, String> {
+        let from_table = self.get_table(relationship.get_from_table());
 
         if from_table.is_err() {
             return Err("`From table` must be defined".to_string());
@@ -213,8 +229,7 @@ impl Schema {
 
         let from_table = from_table.unwrap();
 
-        let to_table = self
-            .get_table(relationship.get_to_table());
+        let to_table = self.get_table(relationship.get_to_table());
 
         if to_table.is_err() {
             return Err("`To table` must be defined".to_string());
@@ -234,7 +249,10 @@ impl Schema {
             return Err("`To column` must be defined".to_string());
         }
 
-        if self.get_relationship_with_code(relationship.get_code()).is_ok() {
+        if self
+            .get_relationship_with_code(relationship.get_code())
+            .is_ok()
+        {
             return Err("Such a relationship is already created".to_string());
         }
 
@@ -253,14 +271,17 @@ impl Schema {
         &mut self,
         relationship: &Relationship,
     ) -> Result<&Relationship, String> {
-        self
-            .relations
+        self.relations
             .iter()
             .position(|r| r.get_code() == relationship.get_code())
             .ok_or("Such a realtion doesn't exist".to_string())?;
 
-        if relationship.get_from_table() == relationship.get_to_table() && relationship.get_from_column() == relationship.get_to_column() {
-            return Err("You can't create a relations to the same column of the same table".to_string());
+        if relationship.get_from_table() == relationship.get_to_table()
+            && relationship.get_from_column() == relationship.get_to_column()
+        {
+            return Err(
+                "You can't create a relations to the same column of the same table".to_string(),
+            );
         }
 
         let from_table = self.get_table(relationship.get_from_table())?;
@@ -270,7 +291,9 @@ impl Schema {
         let to_column = to_table.get_column(relationship.get_to_column())?;
 
         if from_column.get_data_type() != to_column.get_data_type() {
-            return Err("You can't create a relations to columns of different data types".to_string());
+            return Err(
+                "You can't create a relations to columns of different data types".to_string(),
+            );
         }
 
         self.delete_relation(relationship.get_code())?;
@@ -291,16 +314,13 @@ impl Schema {
     ///
     /// # Returns
     /// - A `Result` containing the deleted relationship, or an error message if the relationship does not exist.
-    pub fn delete_relation(
-        &mut self,
-        relation_code: &str,
-    ) -> Result<Relationship, String> {
+    pub fn delete_relation(&mut self, relation_code: &str) -> Result<Relationship, String> {
         let index = self
             .relations
             .iter()
             .position(|r| r.get_code() == relation_code)
             .ok_or("Such a realtion doesn't exist".to_string())?;
-        
+
         Ok(self.relations.swap_remove(index))
     }
 }
@@ -334,7 +354,10 @@ mod tests {
         schema.add_table(table_name).unwrap();
         let result = schema.add_table(table_name);
         assert!(result.is_err());
-        assert_eq!(result.unwrap_err(), format!("Table with name {} already exists", table_name));
+        assert_eq!(
+            result.unwrap_err(),
+            format!("Table with name {} already exists", table_name)
+        );
     }
 
     #[test]
@@ -361,22 +384,26 @@ mod tests {
         schema.add_table("orders").unwrap();
 
         let users_table = schema.get_table_mut("users").unwrap();
-        users_table.add_column(Column::new(
-            "id",
-            data_type::DataType::Integer,
-            true,
-            false,
-            false,
-        )).unwrap();
+        users_table
+            .add_column(Column::new(
+                "id",
+                data_type::DataType::Integer,
+                true,
+                false,
+                false,
+            ))
+            .unwrap();
 
         let orders_table = schema.get_table_mut("orders").unwrap();
-        orders_table.add_column(Column::new(
-            "user_id",
-            data_type::DataType::Integer,
-            false,
-            true,
-            false,
-        )).unwrap();
+        orders_table
+            .add_column(Column::new(
+                "user_id",
+                data_type::DataType::Integer,
+                false,
+                true,
+                false,
+            ))
+            .unwrap();
 
         let relationship = Relationship::new(
             "users",
@@ -413,22 +440,26 @@ mod tests {
         schema.add_table("orders").unwrap();
 
         let users_table = schema.get_table_mut("users").unwrap();
-        users_table.add_column(Column::new(
-            "id",
-            data_type::DataType::Integer,
-            true,
-            false,
-            false,
-        )).unwrap();
+        users_table
+            .add_column(Column::new(
+                "id",
+                data_type::DataType::Integer,
+                true,
+                false,
+                false,
+            ))
+            .unwrap();
 
         let orders_table = schema.get_table_mut("orders").unwrap();
-        orders_table.add_column(Column::new(
-            "user_id",
-            data_type::DataType::Integer,
-            false,
-            true,
-            false,
-        )).unwrap();
+        orders_table
+            .add_column(Column::new(
+                "user_id",
+                data_type::DataType::Integer,
+                false,
+                true,
+                false,
+            ))
+            .unwrap();
 
         let relationship = Relationship::new(
             "users",
@@ -450,22 +481,26 @@ mod tests {
         schema.add_table("orders").unwrap();
 
         let users_table = schema.get_table_mut("users").unwrap();
-        users_table.add_column(Column::new(
-            "id",
-            data_type::DataType::Integer,
-            true,
-            false,
-            false,
-        )).unwrap();
+        users_table
+            .add_column(Column::new(
+                "id",
+                data_type::DataType::Integer,
+                true,
+                false,
+                false,
+            ))
+            .unwrap();
 
         let orders_table = schema.get_table_mut("orders").unwrap();
-        orders_table.add_column(Column::new(
-            "user_id",
-            data_type::DataType::Integer,
-            false,
-            true,
-            false,
-        )).unwrap();
+        orders_table
+            .add_column(Column::new(
+                "user_id",
+                data_type::DataType::Integer,
+                false,
+                true,
+                false,
+            ))
+            .unwrap();
 
         let relationship = Relationship::new(
             "users",
@@ -495,41 +530,61 @@ mod tests {
         schema.add_table("products").unwrap();
 
         let users_table = schema.get_table_mut("users").unwrap();
-        users_table.add_column(Column::new(
-            "id",
-            data_type::DataType::Integer,
-            true,
-            false,
-            false,
-        )).unwrap();
+        users_table
+            .add_column(Column::new(
+                "id",
+                data_type::DataType::Integer,
+                true,
+                false,
+                false,
+            ))
+            .unwrap();
 
         let orders_table = schema.get_table_mut("orders").unwrap();
-        orders_table.add_column(Column::new(
-            "user_id",
-            data_type::DataType::Integer,
-            false,
-            true,
-            false,
-        )).unwrap();
-        orders_table.add_column(Column::new(
-            "product_id",
-            data_type::DataType::Integer,
-            false,
-            true,
-            false,
-        )).unwrap();
+        orders_table
+            .add_column(Column::new(
+                "user_id",
+                data_type::DataType::Integer,
+                false,
+                true,
+                false,
+            ))
+            .unwrap();
+        orders_table
+            .add_column(Column::new(
+                "product_id",
+                data_type::DataType::Integer,
+                false,
+                true,
+                false,
+            ))
+            .unwrap();
 
         let products_table = schema.get_table_mut("products").unwrap();
-        products_table.add_column(Column::new(
-            "id",
-            data_type::DataType::Integer,
-            true,
-            false,
-            false,
-        )).unwrap();
+        products_table
+            .add_column(Column::new(
+                "id",
+                data_type::DataType::Integer,
+                true,
+                false,
+                false,
+            ))
+            .unwrap();
 
-        let rel1 = Relationship::new("users", "id", "orders", "user_id", relationship::RelationshipType::OneToOne);
-        let rel2 = Relationship::new("orders", "product_id", "products", "id", relationship::RelationshipType::OneToMany);
+        let rel1 = Relationship::new(
+            "users",
+            "id",
+            "orders",
+            "user_id",
+            relationship::RelationshipType::OneToOne,
+        );
+        let rel2 = Relationship::new(
+            "orders",
+            "product_id",
+            "products",
+            "id",
+            relationship::RelationshipType::OneToMany,
+        );
         schema.add_relation(rel1).unwrap();
         schema.add_relation(rel2).unwrap();
         let relationships = schema.get_relationships_for_table("orders").unwrap();
@@ -545,22 +600,26 @@ mod tests {
         schema.add_table("orders").unwrap();
 
         let users_table = schema.get_table_mut("users").unwrap();
-        users_table.add_column(Column::new(
-            "id",
-            data_type::DataType::Integer,
-            true,
-            false,
-            false,
-        )).unwrap();
+        users_table
+            .add_column(Column::new(
+                "id",
+                data_type::DataType::Integer,
+                true,
+                false,
+                false,
+            ))
+            .unwrap();
 
         let orders_table = schema.get_table_mut("orders").unwrap();
-        orders_table.add_column(Column::new(
-            "user_id",
-            data_type::DataType::Integer,
-            false,
-            true,
-            false,
-        )).unwrap();
+        orders_table
+            .add_column(Column::new(
+                "user_id",
+                data_type::DataType::Integer,
+                false,
+                true,
+                false,
+            ))
+            .unwrap();
 
         // Add initial relationship
         let initial_relationship = Relationship::new(
@@ -574,7 +633,10 @@ mod tests {
         schema.add_relation(initial_relationship).unwrap();
 
         // Retrieve the relationship and modify it
-        let mut updated_relationship = schema.get_relationship_with_code(&initial_code).unwrap().clone();
+        let mut updated_relationship = schema
+            .get_relationship_with_code(&initial_code)
+            .unwrap()
+            .clone();
         updated_relationship.set_relationship_type(relationship::RelationshipType::OneToOne);
 
         // Update the relationship in the schema
@@ -583,10 +645,11 @@ mod tests {
         let updated_relation_code = result.unwrap().get_code().to_owned();
 
         // Verify the relationship is updated correctly
-        let updated = schema.get_relationship_with_code(&updated_relation_code).unwrap();
+        let updated = schema
+            .get_relationship_with_code(&updated_relation_code)
+            .unwrap();
         assert_eq!(*updated, updated_relationship);
     }
-
 
     #[test]
     fn test_delete_relationship() {
@@ -595,22 +658,26 @@ mod tests {
         schema.add_table("orders").unwrap();
 
         let users_table = schema.get_table_mut("users").unwrap();
-        users_table.add_column(Column::new(
-            "id",
-            data_type::DataType::Integer,
-            true,
-            false,
-            false,
-        )).unwrap();
+        users_table
+            .add_column(Column::new(
+                "id",
+                data_type::DataType::Integer,
+                true,
+                false,
+                false,
+            ))
+            .unwrap();
 
         let orders_table = schema.get_table_mut("orders").unwrap();
-        orders_table.add_column(Column::new(
-            "user_id",
-            data_type::DataType::Integer,
-            false,
-            true,
-            false,
-        )).unwrap();
+        orders_table
+            .add_column(Column::new(
+                "user_id",
+                data_type::DataType::Integer,
+                false,
+                true,
+                false,
+            ))
+            .unwrap();
 
         let relationship = Relationship::new(
             "users",
