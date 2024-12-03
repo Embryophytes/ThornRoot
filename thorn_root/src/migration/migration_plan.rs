@@ -16,7 +16,11 @@ impl MigrationPlan {
     }
 
     pub fn get_sql(&self) -> String {
-        todo!()
+        let mut res = String::default();
+        for step in self.steps.iter() {
+            res.push_str(step.get_sql_script());
+        }
+        res
     }
 }
 
@@ -49,4 +53,17 @@ pub enum MigrationStep {
         relationship: Relationship,
         sql_script: String,
     },
+}
+
+impl MigrationStep {
+    pub fn get_sql_script(&self) -> &str {
+        match self {
+            MigrationStep::CreateTable { sql_script, .. } => sql_script,
+            MigrationStep::DropTable { sql_script, .. } => sql_script,
+            MigrationStep::AddColumn { sql_script, .. } => sql_script,
+            MigrationStep::RemoveColumn { sql_script, .. } => sql_script,
+            MigrationStep::AlterColumn { sql_script, .. } => sql_script,
+            MigrationStep::AddRelationship { sql_script, .. } => sql_script,
+        }
+    }
 }
