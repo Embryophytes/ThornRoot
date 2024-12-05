@@ -18,7 +18,7 @@ impl DatabaseEngine for PostgresEngine {
         for table in tables {
             // let mut migration_step = MigrationStep::CreateTable
             let mut create_table_tmp = format!(
-            r#"
+                r#"
                 CREATE TABLE {} (
                     {{}}
                 );
@@ -35,7 +35,11 @@ impl DatabaseEngine for PostgresEngine {
                             .get_data_type()
                             .to_db_type(PostgresEngine::name())
                             .unwrap(),
-                        if column.is_primary_key() { " PRIMARY KEY" } else { "" } 
+                        if column.is_primary_key() {
+                            " PRIMARY KEY"
+                        } else {
+                            ""
+                        }
                     )
                     // can update here other constraints
                 } else {
@@ -46,7 +50,11 @@ impl DatabaseEngine for PostgresEngine {
                             .get_data_type()
                             .to_db_type(PostgresEngine::name())
                             .unwrap(),
-                        if column.is_primary_key() { " PRIMARY KEY" } else { "" } 
+                        if column.is_primary_key() {
+                            " PRIMARY KEY"
+                        } else {
+                            ""
+                        }
                     )
                     // can update here other constraints
                 };
@@ -150,7 +158,7 @@ mod tests {
                 false,
             ))
             .unwrap();
-        
+
         let relationship = Relationship::new(
             "users",
             "id",
@@ -214,7 +222,7 @@ mod tests {
                 false,
             ))
             .unwrap();
-        
+
         let relationship = Relationship::new(
             "users",
             "id",
