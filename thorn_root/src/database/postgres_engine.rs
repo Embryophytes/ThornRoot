@@ -18,7 +18,7 @@ impl DatabaseEngine for PostgresEngine {
         for table in tables {
             // let mut migration_step = MigrationStep::CreateTable
             let mut create_table_tmp = format!(
-                r#"
+            r#"
                 CREATE TABLE {} (
                     {{}}
                 );
@@ -27,23 +27,26 @@ impl DatabaseEngine for PostgresEngine {
             );
             for (index, column) in table.get_columns().iter().enumerate() {
                 let table_to_place = if index == table.get_columns().len() - 1 {
+                    // PRIMARY KEY
                     format!(
-                        "{} {}",
+                        "{} {}{}",
                         column.get_name(),
                         column
                             .get_data_type()
                             .to_db_type(PostgresEngine::name())
-                            .unwrap()
+                            .unwrap(),
+                        if column.is_primary_key() { " PRIMARY KEY" } else { "" } 
                     )
                     // can update here other constraints
                 } else {
                     format!(
-                        "{} {} {{}}",
+                        "{} {}{},\n\t\t{{}}",
                         column.get_name(),
                         column
                             .get_data_type()
                             .to_db_type(PostgresEngine::name())
-                            .unwrap()
+                            .unwrap(),
+                        if column.is_primary_key() { " PRIMARY KEY" } else { "" } 
                     )
                     // can update here other constraints
                 };
@@ -81,6 +84,7 @@ impl DatabaseEngine for PostgresEngine {
 mod tests {
     use crate::schema::column::Column;
     use crate::schema::data_type;
+    use crate::schema::relationship::{Relationship, RelationshipType};
 
     use super::*;
     #[test]
@@ -110,6 +114,115 @@ mod tests {
                 false,
             ))
             .unwrap();
+
+        let postgres_engine = PostgresEngine;
+        let res = postgres_engine.generate_migration_plan(&mut schema);
+        assert!(res.is_ok());
+        let plan = res.unwrap();
+        let sql = plan.get_sql();
+        println!("{}", sql);
+    }
+
+    #[test]
+    fn test_2_tables_with_column_in_each_1_relation() {
+        let mut schema = Schema::new();
+        schema.add_table("users").unwrap();
+        schema.add_table("orders").unwrap();
+
+        let users_table = schema.get_table_mut("users").unwrap();
+        users_table
+            .add_column(Column::new(
+                "id",
+                data_type::DataType::Integer,
+                true,
+                false,
+                false,
+            ))
+            .unwrap();
+
+        let orders_table = schema.get_table_mut("orders").unwrap();
+        orders_table
+            .add_column(Column::new(
+                "user_id",
+                data_type::DataType::Integer,
+                false,
+                true,
+                false,
+            ))
+            .unwrap();
+        
+        let relationship = Relationship::new(
+            "users",
+            "id",
+            "orders",
+            "user_id",
+            RelationshipType::OneToOne,
+        );
+        schema.add_relation(relationship).unwrap();
+
+        let postgres_engine = PostgresEngine;
+        let res = postgres_engine.generate_migration_plan(&mut schema);
+        assert!(res.is_ok());
+        let plan = res.unwrap();
+        let sql = plan.get_sql();
+        println!("{}", sql);
+    }
+
+    #[test]
+    fn test_2_tables_multiple_columns_in_each_1_relation() {
+        let mut schema = Schema::new();
+        schema.add_table("users").unwrap();
+        schema.add_table("orders").unwrap();
+
+        let users_table = schema.get_table_mut("users").unwrap();
+        users_table
+            .add_column(Column::new(
+                "id",
+                data_type::DataType::Integer,
+                true,
+                false,
+                false,
+            ))
+            .unwrap();
+
+        users_table
+            .add_column(Column::new(
+                "Username",
+                data_type::DataType::String,
+                false,
+                false,
+                false,
+            ))
+            .unwrap();
+
+        let orders_table = schema.get_table_mut("orders").unwrap();
+        orders_table
+            .add_column(Column::new(
+                "id",
+                data_type::DataType::Integer,
+                true,
+                false,
+                false,
+            ))
+            .unwrap();
+        orders_table
+            .add_column(Column::new(
+                "user_id",
+                data_type::DataType::Integer,
+                false,
+                true,
+                false,
+            ))
+            .unwrap();
+        
+        let relationship = Relationship::new(
+            "users",
+            "id",
+            "orders",
+            "user_id",
+            RelationshipType::OneToOne,
+        );
+        schema.add_relation(relationship).unwrap();
 
         let postgres_engine = PostgresEngine;
         let res = postgres_engine.generate_migration_plan(&mut schema);
