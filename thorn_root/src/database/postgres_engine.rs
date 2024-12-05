@@ -12,26 +12,6 @@ impl DatabaseEngine for PostgresEngine {
     }
 
     fn generate_migration_plan(&self, schema: &mut Schema) -> Result<MigrationPlan, String> {
-        // Create the tables
-        // if a table doesn't contain a primary key then one will be created as COL_ID
-
-        // create table template
-        /*
-        CREATE TABLE example_table (
-            column1 data_type1 NOT NULL,
-            column2 data_type2, -- NULL by default
-            column3 data_type3 PRIMARY KEY
-        );
-
-        // if col is PK it can't be unique or not null because it is already PK
-        // other fields can be one
-
-        // add foreign keys - a so called references
-        ALTER TABLE example_table
-        ADD CONSTRAINT column2_fk FOREIGN KEY (column2) REFERENCES another_table (another_column);
-
-        // You are done!
-         */
         let mut migration_steps = Vec::<MigrationStep>::default();
 
         let tables = schema.get_tables();
