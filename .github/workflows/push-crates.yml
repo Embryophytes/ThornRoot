@@ -3,7 +3,6 @@ name: Push crates to crates.io
 on:
   push:
     branches:
-      - main
       - develop
   pull_request:
     branches:
@@ -20,6 +19,8 @@ jobs:
           toolchain: stable
           override: true
       - uses: katyo/publish-crates@v2
+        env:
+          CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
         with:
           # Dry-run if event is push to develop or pull request to develop
-          dry-run: ${{ github.event_name == 'pull_request' || github.ref == 'refs/heads/develop' }}
+          dry-run: ${{ github.event_name == 'pull_request' }}
