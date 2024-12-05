@@ -12,15 +12,16 @@ pub enum DataType {
 }
 impl DataType {
     pub fn to_db_type(&self, db: &str) -> Option<&'static str> {
-        let postgres_value = PostgresEngine::name();
+        let _postgres_value = PostgresEngine::name();
         match db {
-            postgres_value => match self {
+            _postgres_value => match self {
                 DataType::Integer => Some("INTEGER"),
                 DataType::Float => Some("DOUBLE PRECISION"),
                 DataType::String => Some("TEXT"),
                 DataType::Boolean => Some("BOOLEAN"),
                 DataType::Date => Some("DATE"),
             },
+            #[allow(unreachable_patterns)]
             "oracle" => match self {
                 DataType::Integer => Some("NUMBER"),
                 DataType::Float => Some("FLOAT"),
@@ -28,7 +29,6 @@ impl DataType {
                 DataType::Boolean => Some("NUMBER(1)"),
                 DataType::Date => Some("DATE"),
             },
-            _ => None,
         }
     }
 }

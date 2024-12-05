@@ -37,31 +37,39 @@ impl DatabaseEngine for PostgresEngine {
         let tables = schema.get_tables();
         for table in tables {
             // let mut migration_step = MigrationStep::CreateTable
-            let mut create_table_tmp = format!(r#"
+            let mut create_table_tmp = format!(
+                r#"
                 CREATE TABLE {} (
                     {{}}
                 );
-            "#, table.get_name());
+            "#,
+                table.get_name()
+            );
             for (index, column) in table.get_columns().iter().enumerate() {
                 let table_to_place = if index == table.get_columns().len() - 1 {
-                    format!("{} {}",
+                    format!(
+                        "{} {}",
                         column.get_name(),
-                        column.get_data_type().to_db_type(PostgresEngine::name()).unwrap()
+                        column
+                            .get_data_type()
+                            .to_db_type(PostgresEngine::name())
+                            .unwrap()
                     )
                     // can update here other constraints
                 } else {
-                    format!("{} {} {{}}",
+                    format!(
+                        "{} {} {{}}",
                         column.get_name(),
-                        column.get_data_type().to_db_type(PostgresEngine::name()).unwrap()
+                        column
+                            .get_data_type()
+                            .to_db_type(PostgresEngine::name())
+                            .unwrap()
                     )
                     // can update here other constraints
                 };
-                create_table_tmp = create_table_tmp.replace(
-                    "{}",
-                    &table_to_place,
-                );
+                create_table_tmp = create_table_tmp.replace("{}", &table_to_place);
             }
-            migration_steps.push(MigrationStep::CreateTable { 
+            migration_steps.push(MigrationStep::CreateTable {
                 name: table.get_name().to_string(),
                 sql_script: create_table_tmp,
             });
@@ -88,7 +96,6 @@ impl DatabaseEngine for PostgresEngine {
         Ok(MigrationPlan::new(migration_steps))
     }
 }
-
 
 #[cfg(test)]
 mod tests {
@@ -124,13 +131,11 @@ mod tests {
             ))
             .unwrap();
 
-        let postgres_engine = PostgresEngine::default();
+        let postgres_engine = PostgresEngine;
         let res = postgres_engine.generate_migration_plan(&mut schema);
         assert!(res.is_ok());
         let plan = res.unwrap();
         let sql = plan.get_sql();
         println!("{}", sql);
     }
-
 }
-
