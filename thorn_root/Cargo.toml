@@ -1,0 +1,17 @@
+[package]
+name = "thorn_root"
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+description = "This crate defines core structres which will be used in BlackThorn application"
+repository = "https://github.com/Embryophytes/ThornRoot"
+keywords = ["db", "utility"]
+categories = ["development-tools"]
+readme = "../README.md"
+
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+strum = "0.26.3"
+strum_macros = "0.26.4"
